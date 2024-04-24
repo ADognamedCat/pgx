@@ -62,6 +62,7 @@ class State(core.State):
     terminated: Array = FALSE
     truncated: Array = FALSE
     legal_action_mask: Array = jnp.zeros(9, dtype=jnp.bool_)
+    winners: Array = jnp.zeros(3, dtype = jnp.int32)
     _step_count: Array = jnp.int32(0)
     # --- Sparrow Mahjong specific ---
     _turn: Array = jnp.int32(0)  # 0 = dealer
@@ -75,6 +76,7 @@ class State(core.State):
     _shuffled_players: Array = jnp.zeros(N_PLAYER, dtype=jnp.int32)  # 0: dealer, ...
     _dora: Array = jnp.int32(0)  # tile type (0~10) is set
     _scores: Array = jnp.zeros(3, dtype=jnp.int32)  # 0 = dealer
+    
 
     @property
     def env_id(self) -> core.EnvId:
@@ -269,6 +271,7 @@ def _step_by_ron(state: State, scores, winning_players):
         terminated=jnp.bool_(True),
         legal_action_mask=jnp.zeros_like(state.legal_action_mask),
         _scores=scores,
+        winners=winning_players
     )
     r = _order_by_player_idx(scores, state._shuffled_players).astype(jnp.float32) / MAX_SCORE
     return state.replace(rewards=r)  # type: ignore
