@@ -62,6 +62,7 @@ class State(core.State):
     terminated: Array = FALSE
     truncated: Array = FALSE
     legal_action_mask: Array = jnp.zeros(9, dtype=jnp.bool_)
+    winners: Array = jnp.zeros(3, dtype=jnp.int32)
     _step_count: Array = jnp.int32(0)
     # --- Sparrow Mahjong specific ---
     _turn: Array = jnp.int32(0)  # 0 = dealer
@@ -268,6 +269,7 @@ def _step_by_ron(state: State, scores, winning_players):
     state = state.replace(  # type: ignore
         terminated=jnp.bool_(True),
         legal_action_mask=jnp.zeros_like(state.legal_action_mask),
+        winners = winning_players,
         _scores=scores,
     )
     r = _order_by_player_idx(scores, state._shuffled_players).astype(jnp.float32) / MAX_SCORE
