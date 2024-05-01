@@ -269,7 +269,7 @@ def _step_by_ron(state: State, scores, winning_players):
     state = state.replace(  # type: ignore
         terminated=jnp.bool_(True),
         legal_action_mask=jnp.zeros_like(state.legal_action_mask),
-        winners = winning_players,
+        winners.add(winning_players),
         _scores=scores,
     )
     r = _order_by_player_idx(scores, state._shuffled_players).astype(jnp.float32) / MAX_SCORE
